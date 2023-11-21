@@ -82,10 +82,10 @@ can trigger NcAggregate to generate timeseries extractions of datasets. The fina
 
 ### Breaking processing into Jobs
 The processing workload on the system tends to happen in bursts. Processing is needed each day as updates to the model data
-become available. This processing is triggered from daily checks. The extraction tool triggers processing when a user submits
+become available. This processing is triggered from daily checks. **JJ: in addition to these daily checks?**, The extraction tool triggers processing when a user submits
 an extraction job. When the eReefs models are updated, all the derived data and visualisation products need to be regenerated,
 trigging a massive workload. The coordination of all these tasks is performed by JobPlanner. It translates the requests 
-(perform an aggregation, check for new model data) into jobs that need to be performed.
+(perform an aggregation, check for new model data) into jobs that need to be performed. This section provide a short overview of JobPlanner. More information can be found in [the Github repository](https://github.com/open-AIMS/ereefs-documentation/tree/JJ_review).
 
 Originally the AIMS eReefs Platform was developed using a conventional single server architecture, where all the storage and
 processing software we linked to a single large server (see Figure 3). This approach minimised the software complexity, but
