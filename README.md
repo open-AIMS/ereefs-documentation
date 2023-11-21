@@ -12,7 +12,10 @@ develop a platform that will provide a picture of what is currently happening on
 
 The AIMS eReefs Visualisation Platform is developed and maintained by the [Australian Institute of Marine Science](https://www.aims.gov.au/).
 
-## Table of contents
+For more information about eReefs generally, please visit the project website [https://www.ereefs.org.au/](https://www.ereefs.org.au/). 
+For more information about the visualisation portal, please visit [the About page](https://ereefs.aims.gov.au/ereefs-aims/about).
+
+## table of contents
 - [Background](#background)
 - [AIMS eReefs Platform Overview](#ereefs-platform-overview)
 - [Repositories](#repositories)
@@ -33,10 +36,14 @@ eReefs has many components developed and maintained by each of the organisations
 modelling (Queensland Government), remote sensing (BOM and CSIRO), hydrodynamic modelling (BOM and CSIRO) and biogeochemical 
 modelling (CSIRO). AIMS's contribution is to provide data aggregation and visualisation services. Figure 1 shows an overview 
 of the major components of eReefs. The AIMS eReefs platform generates its products based on eReefs model data provided by
-CSIRO, which are driven from boundary data from BOM and DES (Queensland Government). Both CSIRO and BOM provide some additional
-visualisation websites. Each of the eReefs website are accessible from the [eReefs website](https://ereefs.org.au/). This
+CSIRO, which are driven from boundary data from BOM and DES (Queensland Government). **JJ: It's not clear what the boundary 
+data is or why it's required. Either explain here or link to more information**
+Both CSIRO and BOM provide some additional
+visualisation websites. Each of the eReefs website are accessible from the [eReefs website](https://ereefs.org.au/). **JJ: why not link to them here?**. This
 repository focuses on the [AIMS eReefs Platform](https://ereefs.aims.gov.au/) which provides visualisations of the eReefs
-models as animated multi-panel map videos that show the relationships between variables in the models.
+models as animated multi-panel map videos that show the relationships between variables in the models. Figure 1 below show 
+how the data flows between different services that make up the eReefs platform. The AIMS eReefs Platform is represented by the 
+more saturated blue box in the figure below.
 
 ![eReefs overview diagram](./charts/powerpoint-ereefs-overview.png)
 *Figure 1. Overview of the data workflow in eReefs.*
@@ -44,26 +51,31 @@ models as animated multi-panel map videos that show the relationships between va
 ## <a name="ereefs-platform-overview"></a>AIMS eReefs Platform overview
 Figure 2 shows a conceptual overview of the data workflow that occurs in the AIMS eReefs Platform. Model data is pushed
 from CSIRO models to the National Computing Infrastructure (NCI) THREDDs data services. Updated data is then periodically 
+<br>**JJ: This could be more clear. I understand that it checks for updated data daily and downloads when necessary**
 (checked daily) downloaded by the eReefs-download-manager and temporarily saved to a mirror on Amazon S3. The downloads
-are checked for file corruptions and passed through a NcAggregate preprocessing stage to trim out unwanted variables 
-and depths from the data. This significantly shrinks the size of the mirror that must be maintained, leading to significant
+are checked for file corruptions and passed through an NcAggregate preprocessing stage to trim out unwanted variables 
+and depths from the data. **JJ: does this mean we aren't processing all available data? If so, might be good to explain why** 
+This significantly shrinks the size of the mirror that must be maintained, leading to significant
 cost savings, and a reduction in the size of S3 downloads needed for subsequent processing stages. Details of the products already
-processed are recorded in a central database.
+processed are recorded in a central database. **JJ: why? Does this mean that someone else processes these? or do we add the products to the database as we process them?**
 
-The trimmed mirrored model data is then processed by NcAggregate to calculate temporal aggregate products and other derived
+The trimmed mirror model data is then processed by NcAggregate to calculate temporal aggregate products and other derived
 exposure products. Each of these processes pulls data from the S3 mirror then saves the derived data back to S3. Each of the
 aggregate products include a regridding of the raw model data from a curvilinear grid into a regular rectangular grid. This
 increases the file sizes slightly, but allows the data files to then be subsequently read by Desktop GIS applications. 
 
 Visualisations of the trimmed mirror model data and the derived aggregation products are created using NcAnimate.
 This is configured to generate individual maps of aggregation products or a time series of maps in video format. All the 
-visualisation products are stored in S3 and a record of their details is saved in the central database. These visualisations are made
-available through a custom Drupal module that provides the User Interface to navigate through the time series of visualisation
+visualisation products are stored in S3 and a record of their details is saved in the central database. **JJ: I assume this is the 
+same central database referenced earlier. It would be good to link to more information about this database.** These visualisations are made
+available available on the individual product pages (see [example](https://ereefs.aims.gov.au/ereefs-aims/gbr4/temp-wind-salt-current)), through a custom Drupal module that provides 
+the User Interface to navigate through the time series of visualisation
 products. This Drupal module discovers the listing and details of all the visualisations through a server side JSON service that 
-allows queries against the central Database.
+allows queries against the central Database. **JJ: this needs link to details about the JSON service.**
 
 The Data extraction tool consists of a web GUI application (which is a Javascript application) that talks to backend services that
 can trigger NcAggregate to generate timeseries extractions of datasets. The final extractions are also stored in S3.
+**JJ: what Data extraction tool? The tool needs some preable about its purpose**
 
 ![AIMS eReefs platform overview](./charts/powerpoint-aims-ereefs-platform-overview.png)
 *Figure 2. Overview of the AIMS eReefs Platform*
