@@ -57,7 +57,7 @@ are checked for file corruptions and passed through an NcAggregate preprocessing
 and depths from the data. **JJ: does this mean we aren't processing all available data? If so, might be good to explain why** 
 This significantly shrinks the size of the mirror that must be maintained, leading to significant
 cost savings, and a reduction in the size of S3 downloads needed for subsequent processing stages. Details of the products already
-processed are recorded in a central database. **JJ: why? Does this mean that someone else processes these? or do we add the products to the database as we process them?**
+processed are recorded in a central database. **JJ: why record these? Does something else do the processing, or do we add the products to the database as we process them?**
 
 The trimmed mirror model data is then processed by NcAggregate to calculate temporal aggregate products and other derived
 exposure products. Each of these processes pulls data from the S3 mirror then saves the derived data back to S3. Each of the
@@ -85,7 +85,7 @@ The processing workload on the system tends to happen in bursts. Processing is n
 become available. This processing is triggered from daily checks. **JJ: in addition to these daily checks?**, The extraction tool triggers processing when a user submits
 an extraction job. When the eReefs models are updated, all the derived data and visualisation products need to be regenerated,
 trigging a massive workload. The coordination of all these tasks is performed by JobPlanner. It translates the requests 
-(perform an aggregation, check for new model data) into jobs that need to be performed. This section provide a short overview of JobPlanner. More information can be found in [the Github repository](https://github.com/open-AIMS/ereefs-documentation/tree/JJ_review).
+(perform an aggregation, check for new model data) into jobs that need to be performed. This section provide a short overview of JobPlanner. More information can be found in [the Github repository](https://github.com/aims-ks/ereefs-job-planner).
 
 Originally the AIMS eReefs Platform was developed using a conventional single server architecture, where all the storage and
 processing software we linked to a single large server (see Figure 3). This approach minimised the software complexity, but
@@ -108,7 +108,7 @@ updates the central database of its status.
 
 ### Robust job execution and AWS Spot Instances
 The AIMS eReefs Platform uses features of the AWS cloud infrastructure to dynamically adapt the 
-number of active servers based on the current load. When all processing is complete the number of active servers shrinks to
+number of active servers based on the current load. **JJ: which AWS service manages this?** When all processing is complete the number of active servers shrinks to
 a few small servers that maintain the always on services (database and the THREDDS). This dynamic scaling of services significantly
 reduces the server costs of the system as it allows high peak computing performance without needing to pay for idle servers during
 quiet periods. Additionally, the system is robust to server failures, so that if a job to process a given data or visualisation
@@ -119,7 +119,7 @@ a customer wish to use the server. To use these servers the computing architectu
 the AIMS eReefs Platform all servers are hosted on AWS spot instances. If any of the active servers are recalled by AWS then a
 new spot instance is fired up to take over the lost server. This happens for the database and THREDDS servers, resulting in small
 outages (typically 5 min). For processing jobs when the server is recalled the uncompleted jobs are re-issued the next time the 
-JobPlanner is triggered.
+JobPlanner is triggered. **JJ: Did we consider AWS Lambda to run these jobs? this doesn't require any documentation by the way, I'm just curious.**
 
 ## <a name="progressive-open-source"></a>Progressive Open Source
 The complete AIMS eReefs Platform is described in code with all software components described in Git repositories and
