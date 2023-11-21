@@ -15,7 +15,7 @@ The AIMS eReefs Visualisation Platform is developed and maintained by the [Austr
 For more information about eReefs generally, please visit the project website [https://www.ereefs.org.au/](https://www.ereefs.org.au/). 
 For more information about the visualisation portal, please visit [the About page](https://ereefs.aims.gov.au/ereefs-aims/about).
 
-## table of contents
+## Table of contents
 - [Background](#background)
 - [AIMS eReefs Platform Overview](#ereefs-platform-overview)
 - [Repositories](#repositories)
@@ -32,8 +32,8 @@ For more information about the visualisation portal, please visit [the About pag
 - [Infrastructure](#infrastructure)
 
 ## <a name="background"></a>Background
-eReefs has many components developed and maintained by each of the organisations in the collaboration, including catchment 
-modelling (Queensland Government), remote sensing (BOM and CSIRO), hydrodynamic modelling (BOM and CSIRO) and biogeochemical 
+eReefs has many components developed and maintained by each of the organisations in the collaboration, including catchment 
+modelling (Queensland Government), remote sensing (BOM and CSIRO), hydrodynamic modelling (BOM and CSIRO) and biogeochemical 
 modelling (CSIRO). AIMS's contribution is to provide data aggregation and visualisation services. Figure 1 shows an overview 
 of the major components of eReefs. The AIMS eReefs platform generates its products based on eReefs model data provided by
 CSIRO, which are driven from boundary data from BOM and DES (Queensland Government). **JJ: It's not clear what the boundary 
@@ -68,14 +68,14 @@ Visualisations of the trimmed mirror model data and the derived aggregation prod
 This is configured to generate individual maps of aggregation products or a time series of maps in video format. All the 
 visualisation products are stored in S3 and a record of their details is saved in the central database. **JJ: I assume this is the 
 same central database referenced earlier. It would be good to link to more information about this database.** These visualisations are made
-available available on the individual product pages (see [example](https://ereefs.aims.gov.au/ereefs-aims/gbr4/temp-wind-salt-current)), through a custom Drupal module that provides 
+available on the individual product pages (see [example](https://ereefs.aims.gov.au/ereefs-aims/gbr4/temp-wind-salt-current)), through a custom Drupal module that provides 
 the User Interface to navigate through the time series of visualisation
 products. This Drupal module discovers the listing and details of all the visualisations through a server side JSON service that 
 allows queries against the central Database. **JJ: this needs link to details about the JSON service.**
 
 The Data extraction tool consists of a web GUI application (which is a Javascript application) that talks to backend services that
 can trigger NcAggregate to generate timeseries extractions of datasets. The final extractions are also stored in S3.
-**JJ: what Data extraction tool? The tool needs some preable about its purpose**
+**JJ: what Data extraction tool? The tool needs some preamble about its purpose**
 
 ![AIMS eReefs platform overview](./charts/powerpoint-aims-ereefs-platform-overview.png)
 *Figure 2. Overview of the AIMS eReefs Platform*
@@ -111,14 +111,14 @@ The AIMS eReefs Platform uses features of the AWS cloud infrastructure to dynami
 number of active servers based on the current load. When all processing is complete the number of active servers shrinks to
 a few small servers that maintain the always on services (database and the THREDDS). This dynamic scaling of services significantly
 reduces the server costs of the system as it allows high peak computing performance without needing to pay for idle servers during
-quiet periods. Additionally the system is robust to server failures, so that if a job to process a given data or visualisation
+quiet periods. Additionally, the system is robust to server failures, so that if a job to process a given data or visualisation
 product fails due to a server outage then these jobs will be retried on a new server. This robust approach allows us to use
 AWS spot instance servers. Spot instances correspond to surplus uncommitted servers in the AWS infrastructure. These servers are priced
 60 - 70% cheaper normal server prices, but have the disadvantage that they can be reclaimed by AWS with only 2 minutes notice should 
 a customer wish to use the server. To use these servers the computing architecture needs to be robust against these outages. In
 the AIMS eReefs Platform all servers are hosted on AWS spot instances. If any of the active servers are recalled by AWS then a
 new spot instance is fired up to take over the lost server. This happens for the database and THREDDS servers, resulting in small
-outages (typically 5 min). For processing jobs when the server is recalled the uncompleted jobs are reissued the next time the 
+outages (typically 5 min). For processing jobs when the server is recalled the uncompleted jobs are re-issued the next time the 
 JobPlanner is triggered.
 
 ## <a name="progressive-open-source"></a>Progressive Open Source
@@ -134,20 +134,20 @@ For this reason each of the platform code repositories will be released openly o
 to ensure they contain no sensitive information.
 
 Initially the eReefs Download Manager, NcAggregate and NcAnimate were released, along with any dependant libraries. These
-represent the components most likely to be useful as stand alone tools. Each of these tools can be run locally without the
+represent the components most likely to be useful as stand-alone tools. Each of these tools can be run locally without the
 need for the full AWS cloud infrastructure as command line tools. This command line capability was developed to facilitate
 testing of these components. 
 
 
 ## <a name="repositories"></a>Repositories  
 
-The project was divided in sub-projects to make it easier to develop and maintain.
+The project was divided in subprojects to make it easier to develop and maintain.
 Each part of the system is specialised in resolving a single task.
-This documentation repository provides links and introductory documentation for all of the AIMS eReefs Platform code repositories,
+This documentation repository provides links and introductory documentation for all the AIMS eReefs Platform code repositories,
 including those which have not been released publicly yet (as they are still undergoing a security review). All the repositories
 hosted from the `open-AIMS` account are openly available. Those hosted from the `aims-ks` account are still private.
 
-If you wish to access any of the repositories that are still private then please contact us and we can potentially
+If you wish to access any of the repositories that are still private then please contact us, and we can potentially
 set you up as a collaborator.
 
 - **Documentation** (this repository)  
@@ -167,7 +167,7 @@ topics and scripts and configurations for initialising the system. It also conta
 instructions) for the products generated by `ncAggregate` and `ncAnimate`.
 - **DownloadManager**  
 Link: https://github.com/open-AIMS/ereefs-download-manager  
-A Java-based utility responsible for downloading NetCDF files from Thredds catalogues sources, such as the eReefs NCI 
+A Java-based utility responsible for downloading NetCDF files from THREDDS catalogues sources, such as the eReefs NCI 
 server, extracting the metadata from the files for population of the central database, and uploading the files to S3.
 - **JobPlanner**  
 Link: https://github.com/aims-ks/ereefs-job-planner  
@@ -183,7 +183,7 @@ email informing the administrators about the necessary manual approval or denial
 - **JobScheduler**  
 Link: https://github.com/aims-ks/ereefs-job-scheduler  
 The `JobScheduler` is triggered either when a new `Job` is approved or when a `Task` has finished. It submits `Tasks` to
-AWS Batch for execution based on the inter-dependencies of the `Tasks` as identified by `JobPlanner`.
+AWS Batch for execution based on the interdependencies of the `Tasks` as identified by `JobPlanner`.
 - **TaskHandlerController**  
 Link: https://github.com/aims-ks/ereefs-task-handler-controller  
 When a container starts processing a `Task` the `TaskHandlerController` updates the `Task` status in the database. It 
