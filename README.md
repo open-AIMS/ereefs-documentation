@@ -36,10 +36,17 @@ eReefs has many components developed and maintained by each of the organisations
 modelling (Queensland Government), remote sensing (BOM and CSIRO), hydrodynamic modelling (BOM and CSIRO) and biogeochemical 
 modelling (CSIRO). AIMS's contribution is to provide data aggregation and visualisation services. Figure 1 shows an overview 
 of the major components of eReefs. The AIMS eReefs platform generates its products based on eReefs model data provided by
-CSIRO, which are driven from boundary data from BOM and DES (Queensland Government). **JJ: It's not clear what the boundary 
-data is or why it's required. Either explain here or link to more information**
+CSIRO, which are driven from boundary data from BOM and DES (Queensland Government).
+In simple terms, the *boundary data* serves as a specialised input dataset for the model, containing information solely
+at the edges of the model's coverage area. This data, along with other inputs, enables the model to simulate conditions
+throughout the entire managed region. **JJ: It's not clear what the boundary 
+data is or why it's required. Either explain here or link to more information - GL: I added a sentence just before this comment.
+I'm not entirely sure if that clarifies it or adds confusion. We could simply remove reference to the boundary data. I don't think it's necessary.
+It might help to understand how the model works, but that's not really our goal here.**
 Both CSIRO and BOM provide some additional
-visualisation websites. Each of the eReefs website are accessible from the [eReefs website](https://ereefs.org.au/). **JJ: why not link to them here?**. This
+visualisation websites. Each of the eReefs website are accessible from the [eReefs website](https://ereefs.org.au/).
+**JJ: why not link to them here? - GL: Because they are not very good at maintaining their URLs. They change them without providing redirection.
+Also, it's not what we do, it's just a quick reference to what they do.** This
 repository focuses on the [AIMS eReefs Platform](https://ereefs.aims.gov.au/) which provides visualisations of the eReefs
 models as animated multi-panel map videos that show the relationships between variables in the models. Figure 1 below show 
 how the data flows between different services that make up the eReefs platform. The AIMS eReefs Platform is represented by the 
