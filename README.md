@@ -65,7 +65,8 @@ automatically downloads new or modified files to a mirror on Amazon S3 and notif
 The downloaded files are checked for file corruptions and passed through an NcAggregate preprocessing stage to trim out unwanted variables 
 and depths from the data. **JJ: does this mean we aren't processing all available data? If so, might be good to explain why -
 GL: The eReefs model outputs TB of data. We only generate visualisation for what we consider interesting.
-There is no point generating GB of videos to show temperature or current at a depth of 4km** 
+There is no point generating GB of videos to show temperature or current at a depth of 4km.
+The output files also contain several functional variables, which are required by the model, but are not useful to the public** 
 This significantly shrinks the size of the mirror that must be maintained, leading to significant
 cost savings, and a reduction in the size of S3 downloads needed for subsequent processing stages. Details of the products already
 processed are recorded in a central database. **JJ: why record these? Does something else do the processing,
@@ -79,20 +80,26 @@ Getting it from the file itself takes about 5 minutes (the file needs to be down
 The trimmed mirror model data is then processed by NcAggregate to calculate temporal aggregate products and other derived
 exposure products. Each of these processes pulls data from the S3 mirror then saves the derived data back to S3. Each of the
 aggregate products include a regridding of the raw model data from a curvilinear grid into a regular rectangular grid. This
-increases the file sizes slightly, but allows the data files to then be subsequently read by Desktop GIS applications. 
+increases the file sizes slightly, but allows the data files to then be subsequently read by Desktop GIS applications.
 
 Visualisations of the trimmed mirror model data and the derived aggregation products are created using NcAnimate.
 This is configured to generate individual maps of aggregation products or a time series of maps in video format. All the 
 visualisation products are stored in S3 and a record of their details is saved in the central database. **JJ: I assume this is the 
-same central database referenced earlier. It would be good to link to more information about this database.** These visualisations are made
+same central database referenced earlier. It would be good to link to more information about this database. -
+GL: Yes, same database. I'm not sure if we should add a link to the repo, since the database server is defined in the ereefs-definitions project.
+That project contains quite a lot of stuff, not just the definition of the DB.** These visualisations are made
 available on the individual product pages (see [example](https://ereefs.aims.gov.au/ereefs-aims/gbr4/temp-wind-salt-current)), through a custom Drupal module that provides 
 the User Interface to navigate through the time series of visualisation
-products. This Drupal module discovers the listing and details of all the visualisations through a server side JSON service that 
-allows queries against the central Database. **JJ: this needs link to details about the JSON service.**
+products. This Drupal module discovers the listing and details of all the visualisations through a server side JSON service,
+the [eReefs metadata API](https://github.com/aims-ks/ereefs-metadata-api), that 
+allows queries against the central Database. **JJ: this needs link to details about the JSON service. - GL: I added a link to the project repo**
 
-The Data extraction tool consists of a web GUI application (which is a Javascript application) that talks to backend services that
-can trigger NcAggregate to generate timeseries extractions of datasets. The final extractions are also stored in S3.
-**JJ: what Data extraction tool? The tool needs some preamble about its purpose**
+Users can download the data through two different options: utilising the THREDDS service for the NetCDF file download,
+or they can use the Data extraction tool to easily retrieve a subset of the data in a user-friendly CSV format.
+The Data extraction tool consists of a JavaScript web GUI application that talks to backend services.
+When a user file a data extraction request, it triggers NcAggregate to generate timeseries extractions of datasets.
+The final extractions are stored in S3 and an email is sent to the user, with a link to download the data.
+**JJ: what Data extraction tool? The tool needs some preamble about its purpose - GL: Yes, that was added later and it feels disconnected. I re-phrased the whole paragraph.**
 
 ![AIMS eReefs platform overview](./charts/powerpoint-aims-ereefs-platform-overview.png)
 *Figure 2. Overview of the AIMS eReefs Platform*
