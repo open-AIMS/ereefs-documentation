@@ -278,8 +278,8 @@ The eReefs application is a distributed system using the AWS infrastructure (see
 - SNS messaging to communicate and trigger events between the different computing nodes
 - AWS Gateway to handle incoming web requests
 
-Bigger components like the `JobPlanner` run in a Docker container on EC2 instances while smaller components run as AWS Lambda functions.  
-It uses an event-driven approach using AWS SNS. The custom build components are loosely coupled without direct 
+Bigger components like the `JobPlanner` run in a Docker container on EC2 instances while smaller components run as AWS Lambda 
+functions. It uses an event-driven approach using AWS SNS. The custom build components are loosely coupled without direct 
 interaction, publishing messages to AWS SNS topics which trigger other components subscribed to it. The message
 format is JSON.
 
@@ -328,6 +328,8 @@ Three of the main objects in the eReefs application are the `Job`, the `Task`, a
 #### <a name="job"></a>Job
 The `Job` is the aggregating entity for one or more `Tasks`.  **JJ: please add an example of what tasks might make up a job.**
 
+**JJ: the details of a job are stored in MongoDB?**
+
 Definition:  
 
 Property    | Description
@@ -338,7 +340,7 @@ status      | the current status of the `Job` (see [Status descriptions](#status
 triggeredBy | which system triggered the `Job` creation. This can either be `OPERATIONAL` or `EXTRACTION_REQUEST`,
 history     | a list of descriptions of status changes
 
-Example:
+Example: **JJ: Is this example the format of the SNS notification or the MongoDB entry?**
 ```json
 {
   "_id": "Job_31ae5173-3345-42c3-87ec-322666e29e2e",
