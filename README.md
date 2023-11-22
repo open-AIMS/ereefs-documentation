@@ -260,7 +260,7 @@ to send out emails notifying the user when an extraction request has finished pr
 ![architecture overview](./charts/overview.png)
 *Figure 4. Technical overview of the AIMS eReefs Platform infrastructure.* 
 
-The eReefs application is a distributed system using the AWS infrastructure (see Figure 4). The [Devinitions](https://github.com/aims-ks/ereefs-definitions) repository contains the code for the deployment of the services. It includes the following: 
+The eReefs application is a distributed system using the AWS infrastructure (see Figure 4). The [Definitions](https://github.com/aims-ks/ereefs-definitions) repository contains the code for the deployment of the services. It includes the following: 
 
 - AWS Batch to manage a pool of servers
 - AWS S3 persistent storage, facilitates access by multiple servers
