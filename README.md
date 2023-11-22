@@ -82,10 +82,10 @@ can trigger NcAggregate to generate timeseries extractions of datasets. The fina
 
 ### Breaking processing into Jobs
 The processing workload on the system tends to happen in bursts. Processing is needed each day as updates to the model data
-become available. This processing is triggered from daily checks. **JJ: in addition to these daily checks?**, The extraction tool triggers processing when a user submits
+become available. This processing is triggered from daily checks. **JJ: in addition to these daily checks?**, the extraction tool triggers processing when a user submits
 an extraction job. When the eReefs models are updated, all the derived data and visualisation products need to be regenerated,
-trigging a massive workload. The coordination of all these tasks is performed by JobPlanner. It translates the requests 
-(perform an aggregation, check for new model data) into jobs that need to be performed. This section provide a short overview of JobPlanner. More information can be found in [the Github repository](https://github.com/aims-ks/ereefs-job-planner).
+trigging a massive workload. The coordination of all these tasks is performed by [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). It translates the requests 
+(perform an aggregation, check for new model data) into jobs that need to be performed. This section provide a short overview of [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). More information can be found in [the Github repository](https://github.com/aims-ks/ereefs-job-planner).
 
 Originally the AIMS eReefs Platform was developed using a conventional single server architecture, where all the storage and
 processing software we linked to a single large server (see Figure 3). This approach minimised the software complexity, but
@@ -119,7 +119,7 @@ a customer wish to use the server. To use these servers the computing architectu
 the AIMS eReefs Platform all servers are hosted on AWS spot instances. If any of the active servers are recalled by AWS then a
 new spot instance is fired up to take over the lost server. This happens for the database and THREDDS servers, resulting in small
 outages (typically 5 min). For processing jobs when the server is recalled the uncompleted jobs are re-issued the next time the 
-[JobPlanner]https://github.com/aims-ks/ereefs-job-planner) is triggered.
+[JobPlanner](https://github.com/aims-ks/ereefs-job-planner) is triggered.
 
 ## <a name="progressive-open-source"></a>Progressive Open Source
 The complete AIMS eReefs Platform is described in code with all software components described in Git repositories and
@@ -258,15 +258,18 @@ to send out emails notifying the user when an extraction request has finished pr
 
 ## <a name="technical-overview"></a>Technical Overview  
 ![architecture overview](./charts/overview.png)
-*Figure 4. Technical overview of the AIMS eReefs Platform infrastructure. It uses AWS Batch to manage a pool of servers, 
-AWS S3 persistent storage that can be access by multiple servers, a MongoDB database to remember the state of all the 
-jobs being done, AWS Lambda functions to run the coordination code that manages the scalable computing without needing 
-permanently running servers, SNS messaging to communicate and trigger events between the different computing nodes and
-AWS Gateway to handle incoming web requests.*
+*Figure 4. Technical overview of the AIMS eReefs Platform infrastructure.* 
 
+The eReefs application is a distributed system using the AWS infrastructure (see Figure 4). The [Devinitions](https://github.com/aims-ks/ereefs-definitions) repository contains the code for the deployment of the services. It includes the following: 
 
-The eReefs application is a distributed system using the AWS infrastructure. Bigger components like the `JobPlanner` 
-run in Docker container on EC2 instances while smaller components run as AWS Lambda functions.  
+- AWS Batch to manage a pool of servers
+- AWS S3 persistent storage, facilitates access by multiple servers
+- a MongoDB database to track the state of jobs
+- AWS Lambda functions to run the coordination code that manages the scalable computing without needing permanently running servers
+- SNS messaging to communicate and trigger events between the different computing nodes
+- AWS Gateway to handle incoming web requests
+
+Bigger components like the `JobPlanner` run in a Docker container on EC2 instances while smaller components run as AWS Lambda functions.  
 It uses an event-driven approach using AWS SNS. The custom build components are loosely coupled without direct 
 interaction, publishing messages to AWS SNS topics which trigger other components subscribed to it. The message
 format is JSON.
