@@ -103,7 +103,7 @@ become available. This processing is triggered from daily checks. **JJ: in addit
 an extraction job. When the eReefs models are updated, all the derived data and visualisation products need to be regenerated,
 trigging a massive workload. 
 A group of tasks that relate to a particular action (such as processing new data, or regenerating derived data and visualisations), it known as a Job. **JJ: I have added the previous sentence base on what I can gather about Jobs. Please change if incorrect.**
-The coordination of all these tasks is performed by [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). It translates the requests 
+The coordination of the tasks that make up a Job is performed by [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). It translates the requests 
 (perform an aggregation, check for new model data) into jobs that need to be performed. This section provide a short overview of [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). More information can be found in [the Github repository](https://github.com/aims-ks/ereefs-job-planner).
 
 Originally the AIMS eReefs Platform was developed using a conventional single server architecture, where all the storage and
@@ -295,14 +295,15 @@ format is JSON.
 
 S3 is used as a file storage while MongoDB is used as the system database, holding information shared across multiple 
 components, e.g. `Job` definitions or `Task` status. AWS Batch is used for scheduling and processing single `Tasks` 
-while Amazon CloudWatch triggers the `DownloadManager` on a regular basis and pushes notifications when an AWS Batch job 
+while Amazon CloudWatch triggers the [DownloadManager](https://github.com/open-AIMS/ereefs-download-manager) on a regular basis (**JJ: using SNS?**)and pushes notifications (**JJ: to SNS?**) when an AWS Batch job 
 either starts processing or finishes. Furthermore, Amazon CloudWatch is set up to push a message to SNS when an Amazon Spot 
 Instance is going to be terminated. For managing `Jobs`, `Tasks` and `Extraction-Requests`, administrators can use the 
-`AdminTool`. It has a JS user interface which communicates with Amazon API Gateway to process tasks (e.g. `approve-job`).
-A further component of the system is the `ExtractionTool`. This tool provides users with the possibility to specify 
+`AdminTool`. **JJ: where can I find out more about the AdminTool? I can't see it in the Repositories section.** It has a JS user interface which communicates with Amazon API Gateway to process tasks (e.g. `approve-job`).
+A further component of the system is the [ExtractionToolUI](https://github.com/aims-ks/ereefs-extraction-tool-ui). This tool provides users with the possibility to specify 
 exactly which part of the data (raw eReefs data or aggregations) they are interested in and creates a file for 
-downloading. The `ExtractionTool` has a JS front end and communicates with Amazon API Gateway for processing requests.
+downloading. The [ExtractionTool](https://github.com/aims-ks/ereefs-extraction-tool-ui) has a JS front end and communicates with Amazon API Gateway for processing requests.
 
+**JJ: I think this section needs work. The finer details are there but the overall picture is lost. I'm not sure how many different types of events can trigger a Job, but if not too many, I think it would be good to go over the flow of events that lead from the trigger event. As far as I understand there are 3 possible trigger events; 1. new data is published by CSIRO; 2. eReefs models are updated; 3. a custom product is requested through the Extraction Tool. It would be good if that was more clear, and if we could see exactly the flow of events when one of these things happens.**
 
 ## <a name="sns-topics-and-messages"></a>SNS topics and messages
 One of the core concepts in this application is the AWS SNS service with its topics and messages. They connect the 
@@ -349,6 +350,8 @@ createdBy   | which system created the `Job` (by default this will be `JobPlanne
 status      | the current status of the `Job` (see [Status descriptions](#status-descriptions) for more information)
 triggeredBy | which system triggered the `Job` creation. This can either be `OPERATIONAL` or `EXTRACTION_REQUEST`,
 history     | a list of descriptions of status changes
+
+**JJ: how does the JobPlanner know what tasks are required to be performed from this information? I can't see a product_id or anything like that.**
 
 Example: **JJ: Is this example the format of the SNS notification or the MongoDB entry?**
 ```json
