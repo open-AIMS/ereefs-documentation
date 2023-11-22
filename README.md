@@ -45,7 +45,7 @@ I'm not entirely sure if that clarifies it or adds confusion. We could simply re
 It might help to understand how the model works, but that's not really our goal here.**
 Both CSIRO and BOM provide some additional
 visualisation websites. Each of the eReefs website are accessible from the [eReefs website](https://ereefs.org.au/).
-**JJ: why not link to them here? - GL: Because they are not very good at maintaining their URLs. They change them without providing redirection.
+**JJ: why not link to them here? - GL: Because URLs are not always well maintained. They can change without providing redirection.
 Also, it's not what we do, it's just a quick reference to what they do.** This
 repository focuses on the [AIMS eReefs Platform](https://ereefs.aims.gov.au/) which provides visualisations of the eReefs
 models as animated multi-panel map videos that show the relationships between variables in the models. Figure 1 below show 
@@ -57,14 +57,24 @@ more saturated blue box in the figure below.
 
 ## <a name="ereefs-platform-overview"></a>AIMS eReefs Platform overview
 Figure 2 shows a conceptual overview of the data workflow that occurs in the AIMS eReefs Platform. A more technical overview is provided [in a later section](#technical-overview). Model data is pushed
-from CSIRO models to the National Computing Infrastructure (NCI) THREDDs data services. Updated data is then periodically 
-<br>**JJ: This could be more clear. I understand that it checks for updated data daily and downloads when necessary**
-(checked daily) downloaded by the [DownloadManager](https://github.com/open-AIMS/ereefs-download-manager) and temporarily saved to a mirror on Amazon S3. The downloads
-are checked for file corruptions and passed through an NcAggregate preprocessing stage to trim out unwanted variables 
-and depths from the data. **JJ: does this mean we aren't processing all available data? If so, might be good to explain why** 
+from CSIRO models to the National Computing Infrastructure (NCI) THREDDs data services.
+
+The data repository is checked daily for changes. The [DownloadManager](https://github.com/open-AIMS/ereefs-download-manager)
+automatically downloads new or modified files to a mirror on Amazon S3 and notify the system when files are downloaded.
+**GL: I rephrased that sentence, using the text I wrote for the private doc overview**
+The downloaded files are checked for file corruptions and passed through an NcAggregate preprocessing stage to trim out unwanted variables 
+and depths from the data. **JJ: does this mean we aren't processing all available data? If so, might be good to explain why -
+GL: The eReefs model outputs TB of data. We only generate visualisation for what we consider interesting.
+There is no point generating GB of videos to show temperature or current at a depth of 4km** 
 This significantly shrinks the size of the mirror that must be maintained, leading to significant
 cost savings, and a reduction in the size of S3 downloads needed for subsequent processing stages. Details of the products already
-processed are recorded in a central database. **JJ: why record these? Does something else do the processing, or do we add the products to the database as we process them?**
+processed are recorded in a central database. **JJ: why record these? Does something else do the processing,
+or do we add the products to the database as we process them? -
+GL: S3 keeps very little file metadata. We register metadata such as last modified date, downloaded date, file status (valid, corrupted, etc),
+NetCDF variable and dimensions extents, file checksum, etc. The system needs that info to know if the file needs to be re-downloaded, re-processed, ignored, etc.
+The system needs to know what have changed in order to know what needs to be done (i.e. re-generated).
+All metadata info is stored in DB. We also store NetCDF variable info because getting those from a DB only takes a few milliseconds.
+Getting it from the file itself takes about 5 minutes (the file needs to be downloaded for the info to be extracted)**
 
 The trimmed mirror model data is then processed by NcAggregate to calculate temporal aggregate products and other derived
 exposure products. Each of these processes pulls data from the S3 mirror then saves the derived data back to S3. Each of the
