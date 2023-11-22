@@ -91,11 +91,13 @@ can trigger NcAggregate to generate timeseries extractions of datasets. The fina
 The processing workload on the system tends to happen in bursts. Processing is needed each day as updates to the model data
 become available. This processing is triggered from daily checks. **JJ: in addition to these daily checks?**, the extraction tool triggers processing when a user submits
 an extraction job. When the eReefs models are updated, all the derived data and visualisation products need to be regenerated,
-trigging a massive workload. The coordination of all these tasks is performed by [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). It translates the requests 
+trigging a massive workload. 
+A group of tasks that relate to a particular action (such as processing new data, or regenerating derived data and visualisations), it known as a Job. **JJ: I have added the previous sentence base on what I can gather about Jobs. Please change if incorrect.**
+The coordination of all these tasks is performed by [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). It translates the requests 
 (perform an aggregation, check for new model data) into jobs that need to be performed. This section provide a short overview of [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). More information can be found in [the Github repository](https://github.com/aims-ks/ereefs-job-planner).
 
 Originally the AIMS eReefs Platform was developed using a conventional single server architecture, where all the storage and
-processing software we linked to a single large server (see Figure 3). This approach minimised the software complexity, but
+processing software were linked to a single large server (see Figure 3). This approach minimised the software complexity, but
 resulted in inefficient infrastructure utilisation. The server needed to be large enough to cope with the peak demands of the
 service, which lead to significant idle time (~90%) and the conventional network (AWS EBS) hard disks needed to precommit to 
 a certain amount of storage, leading to unused space most of the time and the hassle of migrating data to progressively
@@ -106,7 +108,7 @@ In this approach all persistent storage uses S3 object storage. This allows mult
 data files concurrently. The processing tasks are split into Jobs, each corresponding to a set of tasks (e.g. 
 update an animation product, perform a data extraction). Each of these tasks are then performed by either 
 `NcAnimate` or `NcAggregate` running in a Docker container on a pool of servers. The number
-of active servers is actively managed by AWS Batch. As each Docker contain is started it checks the central database (MongoDB)
+of active servers is actively managed by AWS Batch. As each Docker container is started it checks the central database (MongoDB)
 for details of the task to be run. As the Job executes it pulls data from S3 and saves its results back to S3 storage, and
 updates the central database of its status.
 
@@ -324,7 +326,7 @@ Topic                        | Publisher                                        
 Three of the main objects in the eReefs application are the `Job`, the `Task`, and the `ExtractionRequest`.  
 
 #### <a name="job"></a>Job
-The `Job` is the aggregating entity for one or more `Tasks`.  
+The `Job` is the aggregating entity for one or more `Tasks`.  **JJ: please add an example of what tasks might make up a job.**
 
 Definition:  
 
