@@ -297,11 +297,12 @@ A shared Java library containing some layers of abstraction to simplify interact
     as creating iterators for bean collections, downloading NetCDF files from S3, combining ncAnimate config files, etc.
 - **MetadataAPI**  
 Link: https://github.com/aims-ks/ereefs-metadata-api  
-The `MetadataAPI` provides an endpoint via AWS API Gateway to access the product metadata. 
+The `MetadataAPI` provides an endpoint via AWS API Gateway to access the product metadata.
+It is used by the [eReefs AIMS website](https://ereefs.aims.gov.au) to get information about available videos and maps.
 - **Thredds**  
 Link: https://github.com/aims-ks/ereefs-thredds  
-This repository contains scripts to build and deploy a THREDDS Docker container to AWS to serve the produced output 
-files.
+This repository contains scripts to build and deploy a THREDDS Docker container to AWS to serve the generated output 
+NetCDF files.
 - **ExtractionToolUI**  
 Link: https://github.com/aims-ks/ereefs-extraction-tool-ui  
 The eReefs `ExtractionToolUi` is a React web application to let users define an extraction request which is submitted
