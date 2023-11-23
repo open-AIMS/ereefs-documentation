@@ -171,19 +171,23 @@ new spot instance is spawned to take over the lost server. This happens for the 
 outages (typically 5 min). For processing jobs when the server is recalled the uncompleted jobs are re-issued the next time the 
 [JobPlanner](https://github.com/aims-ks/ereefs-job-planner) is triggered.
 
+
 ## <a name="progressive-open-source"></a>Progressive Open Source
-The complete AIMS eReefs Platform is described in code with all software components described in Git repositories and
+
+The complete AIMS eReefs Platform is described in code: All software components described in Git repositories and
 the cloud infrastructure described using CloudFormation infrastructure code. It is our intention to make the full source
-of the platform available as open source. 
+of the platform available as open source.
 
 Cloud based architectures involve a lot of interconnected services that rely on complex authentication processes to allow
 these services to talk with each other. This complexity introduces significant potential security risks to the AIMS eReefs Platform
 infrastructure if any of the authentication keys are accidentally included in the source code then released openly.
 
-For this reason each of the platform code repositories will be released openly only after they have undergone a security review 
+For this reason, each of the platform code repositories is released openly only after they have undergone a security review 
 to ensure they contain no sensitive information.
 
-Initially the eReefs Download Manager, NcAggregate and NcAnimate were released, along with any dependant libraries. These
+Initially the eReefs [Download Manager](https://github.com/open-AIMS/ereefs-download-manager),
+[NcAggregate](https://github.com/open-AIMS/ereefs-netcdf-aggregator) and
+[NcAnimate](https://github.com/open-AIMS/ereefs-ncanimate2) were released, along with any dependant libraries. These
 represent the components most likely to be useful as stand-alone tools. Each of these tools can be run locally without the
 need for the full AWS cloud infrastructure as command line tools. This command line capability was developed to facilitate
 testing of these components. 
