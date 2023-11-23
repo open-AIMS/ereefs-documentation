@@ -680,9 +680,12 @@ The following chart describes the default processing workflow for a `Task`:
 
 **JJ: This chart disagrees with the message-flow diagram. message-flow seems to suggest that it is JobTerminator 
 that posts to the job-complete topic. However this chart shows TaskHandlerController being the one to change 
-MongoDB to status COMPLETE once all tasks are finished (See the bottom of the chart). Also, in the [Job subsection of Status Descriptions](#job-1), it says that job status COMPLETE "can only be set by JobTerminator", however this chart shows that TaskHandlerController run `updateJobStatus(compelete)`. Maybe the message-flow diagram should be 
+MongoDB to status COMPLETE once all tasks are finished (See the bottom of the chart). Also, in the [Job subsection of Status Descriptions](#job-1),
+it says that job status COMPLETE "can only be set by JobTerminator", however this chart shows that TaskHandlerController run `updateJobStatus(compelete)`.
+Maybe the message-flow diagram should be 
 changed to show TaskHandlerController being the one to change MongoDB. `task-finished` triggers `JobTerminator`, however this 
-chart doesn't show `JobTerminator` doing anything after that, so if that's the case, then why is it triggered?.**
+chart doesn't show `JobTerminator` doing anything after that, so if that's the case, then why is it triggered?.
+GL: Good attention to details. I don't know enough about those processes. We should discuss this with Marc**
 
 ### <a name="extraction-request-status"></a>Extraction-Request
 
