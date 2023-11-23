@@ -105,20 +105,29 @@ The final extractions are stored in S3 and an email is sent to the user, with a 
 *Figure 2. Overview of the AIMS eReefs Platform*
 
 ### Breaking processing into Jobs
-The processing workload on the system tends to happen in bursts. Processing is needed each day as updates to the model data
-become available. This processing is triggered from daily checks. **JJ: in addition to these daily checks?**, the extraction tool triggers processing when a user submits
-an extraction job. When the eReefs models are updated, all the derived data and visualisation products need to be regenerated,
-trigging a massive workload. 
-A group of tasks that relate to a particular action (such as processing new data, or regenerating derived data and visualisations), it known as a Job. **JJ: I have added the previous sentence base on what I can gather about Jobs. Please change if incorrect.**
-The coordination of the tasks that make up a Job is performed by [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). It translates the requests 
-(perform an aggregation, check for new model data) into jobs that need to be performed. This section provide a short overview of [JobPlanner](https://github.com/aims-ks/ereefs-job-planner). More information can be found in [the Github repository](https://github.com/aims-ks/ereefs-job-planner).
+The processing workload on the system tends to happen in bursts. The most notable scenarios are:
+- **Daily processing**: Each day, the system checks for file modifications in the original model output source, NCI.
+- **Data extraction requests**: A user may request data using the Data extraction tool. They rarely only request one set of data.
+  It is very common to see several subsequent data requests for different locations, or for a different time range.
+- **Model update**: In rare occasions, updates or bug fixes are applied to the eReefs model. When that happens, large collections of
+  files are re-generated on NCI, to reflect the changes. This triggers the Download Manager to re-download the files,
+  which in turns triggers NcAggregate to re-generate its derived files, then triggers NcAnimate to re-generate the visualisation
+  products; maps and videos. This massive workload can take weeks or even months to process.
+
+A group of tasks that relate to a particular action (such as processing new data, or regenerating derived data and visualisations), is known as a Job.
+**JJ: I have added the previous sentence base on what I can gather about Jobs. Please change if incorrect. - GL: That's perfect.**
+The coordination of the tasks that make up a Job is performed by [JobPlanner](https://github.com/aims-ks/ereefs-job-planner).
+It translates the requests (perform an aggregation, check for new model data) into jobs that need to be performed.
+
+This section provide a short overview of [JobPlanner](https://github.com/aims-ks/ereefs-job-planner).
+More information can be found in [the GitHub repository](https://github.com/aims-ks/ereefs-job-planner).
 
 Originally the AIMS eReefs Platform was developed using a conventional single server architecture, where all the storage and
 processing software were linked to a single large server (see Figure 3). This approach minimised the software complexity, but
-resulted in inefficient infrastructure utilisation. The server needed to be large enough to cope with the peak demands of the
-service, which lead to significant idle time (~90%) and the conventional network (AWS EBS) hard disks needed to precommit to 
+resulted in inefficient resource utilisation. The server needed to be large enough to cope with the peak demands of the
+service, which lead to significant idle time (~90%) and the conventional network hard disks (AWS EBS) needed to precommit to 
 a certain amount of storage, leading to unused space most of the time and the hassle of migrating data to progressively
-larger and larger disks each 6 - 12 months. 
+larger and larger disks each 6 to 12 months. 
 
 The AIMS eReefs Platform was reengineered to take advantage of scalable cloud architecture from 2018 - 2020 (see Figure 3).
 In this approach all persistent storage uses S3 object storage. This allows multiple servers to access the
