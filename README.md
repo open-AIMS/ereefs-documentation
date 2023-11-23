@@ -404,12 +404,18 @@ Topic                        | Publisher                                        
 `task-termination-requested` | `AdminTool`                                                                                         | `JobTerminator`                | This message is published when the user clicks the terminate-task button in the `AdminTool`.
 
 ### <a name="object-definitions"></a>Object definitions
-Three of the main objects in the eReefs application are the `Job`, the `Task`, and the `ExtractionRequest`. **JJ: so an ExtractionRequest is not a job, but it triggers a job? I think that should be explained. I'm also interested as to why an ExtractionRequest isn't a type of job. If that's explanation doesn't belong in this documentation them please message me on teams.**
+Three of the main objects in the eReefs application are the `Job`, the `Task`, and the `ExtractionRequest`.
+**JJ: so an ExtractionRequest is not a job, but it triggers a job? I think that should be explained.
+I'm also interested as to why an ExtractionRequest isn't a type of job.
+If that's explanation doesn't belong in this documentation them please message me on Teams.
+GL: I believe you are right, it triggers a Job. Will need to ask Marc.**
 
 #### <a name="job"></a>Job
-The `Job` is the aggregating entity for one or more `Tasks`.  **JJ: please add an example of what tasks might make up a job.**
+The `Job` is the aggregating entity for one or more `Tasks`.
+**JJ: please add an example of what tasks might make up a job.
+GL: I will get an example from the Database. It will be hard to come up with a minimal example, but I can simplify it.**
 
-**JJ: the details of a job are stored in MongoDB?**
+**JJ: the details of a job are stored in MongoDB? - GL: Yes**
 
 Definition:  
 
@@ -418,12 +424,13 @@ Property    | Description
 _id         | unique identifier for the `Job`
 createdBy   | which system created the `Job` (by default this will be `JobPlanner`)
 status      | the current status of the `Job` (see [Status descriptions](#status-descriptions) for more information)
-triggeredBy | which system triggered the `Job` creation. This can either be `OPERATIONAL` or `EXTRACTION_REQUEST`,
+triggeredBy | which system triggered the `Job` creation. This can either be `OPERATIONAL` or `EXTRACTION_REQUEST`
 history     | a list of descriptions of status changes
 
-**JJ: how does the JobPlanner know what tasks are required to be performed from this information? I can't see a product_id or anything like that.**
+**JJ: how does the JobPlanner know what tasks are required to be performed from this information? I can't see a product_id or anything like that.
+GL: The JobPlanner creates the job and all its tasks. Tasks are also stored in the DB and are linked to the job: Look task, field jobId.**
 
-Example: **JJ: Is this example the format of the SNS notification or the MongoDB entry?**
+Example: **JJ: Is this example the format of the SNS notification or the MongoDB entry? - GL: MongoDB entry. It needs some clarification.**
 ```json
 {
   "_id": "Job_31ae5173-3345-42c3-87ec-322666e29e2e",
@@ -437,7 +444,7 @@ Example: **JJ: Is this example the format of the SNS notification or the MongoDB
 }
 ```
 
-### Task
+#### Task
 The `Task` is a single step in a `Job`.
 
 Definition:  
@@ -572,7 +579,9 @@ Example:
 ```
 
 ## <a name="status-descriptions"></a>Status descriptions
+
 ### <a name="job-status"></a>Job
+
 ![job-status](./charts/job-status.png)
 
 Status              | Description
