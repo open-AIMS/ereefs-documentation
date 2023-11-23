@@ -143,16 +143,31 @@ updates the central database of its status.
 
 ### Robust job execution and AWS Spot Instances
 The AIMS eReefs Platform uses features of the AWS cloud infrastructure to dynamically adapt the 
-number of active servers based on the current load. **JJ: which AWS service manages this?** When all processing is complete the number of active servers shrinks to
-a few small servers that maintain the always on services (database and the THREDDS). This dynamic scaling of services significantly
+number of active servers based on the current load.
+The tasks are sent to AWS Batch by the [Job Scheduler](https://github.com/aims-ks/ereefs-job-scheduler).
+They are queued in an AWS Batch Job queue.
+AWS Batch spawn servers and assign tasks to them from the queue.
+A task is associated with a Docker image stored in an AWS ECR (Elastic Container Registry).
+AWS Batch deploy the task's Docker image to a free server, initialise it with some environmental variables specific
+to the task and starts the service.
+Once a spawned server is idle and the queue is empty, AWS Batch terminates the server.
+Only a few small servers remain active, for eReefs permanent services; database, prometheus and THREDDS.
+
+The file `cloudformation/batch.yaml` from the [eReefs Definitions](https://github.com/aims-ks/ereefs-definitions) project
+defines the maximum number of servers (`MaxvCpus`) and server types (`InstanceTypes`) that can be deployed in each queue.
+**JJ: which AWS service manages this? - GL: I rephrase the whole paragraph.**
+
+This dynamic scaling of services significantly
 reduces the server costs of the system as it allows high peak computing performance without needing to pay for idle servers during
-quiet periods. Additionally, the system is robust to server failures, so that if a job to process a given data or visualisation
-product fails due to a server outage then these jobs will be retried on a new server. This robust approach allows us to use
-AWS spot instance servers. Spot instances correspond to surplus uncommitted servers in the AWS infrastructure. These servers are priced
-60 - 70% cheaper normal server prices, but have the disadvantage that they can be reclaimed by AWS with only 2 minutes notice should 
-a customer wish to use the server. To use these servers the computing architecture needs to be robust against these outages. In
-the AIMS eReefs Platform all servers are hosted on AWS spot instances. If any of the active servers are recalled by AWS then a
-new spot instance is fired up to take over the lost server. This happens for the database and THREDDS servers, resulting in small
+quiet periods. Additionally, the system is robust to server failures. If a task fails due to a server outage,
+it is retried on a new server. This robust approach allows us to use AWS spot instance servers.
+
+Spot instances correspond to surplus uncommitted servers in the AWS infrastructure. These servers are priced
+60 - 70% cheaper normal server prices, but have the disadvantage of been unreliable.
+They can be reclaimed by AWS with only 2 minutes notice should a customer wish to use the server.
+To use these servers, the computing architecture needs to be robust against these outages.
+In the AIMS eReefs Platform, all servers are hosted on AWS spot instances. If any of the active servers are recalled by AWS then a
+new spot instance is spawned to take over the lost server. This happens for the database and prometheus servers, resulting in small
 outages (typically 5 min). For processing jobs when the server is recalled the uncompleted jobs are re-issued the next time the 
 [JobPlanner](https://github.com/aims-ks/ereefs-job-planner) is triggered.
 
