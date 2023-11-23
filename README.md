@@ -236,7 +236,7 @@ The `JobApprover` checks the processing size of newly created `Jobs` and either 
 email informing the administrators about the necessary manual approval or denial.  
 - **JobScheduler**  
 Link: https://github.com/aims-ks/ereefs-job-scheduler  
-The `JobScheduler` is triggered either when a new `Job` is approved or when a `Task` has finished. It submits `Tasks` to
+**JJ: Schedules `Tasks` within a `Job`?** The `JobScheduler` is triggered either when a new `Job` is approved or when a `Task` has finished. It submits `Tasks` to
 AWS Batch for execution based on the interdependencies of the `Tasks` as identified by `JobPlanner`.
 - **TaskHandlerController**  
 Link: https://github.com/aims-ks/ereefs-task-handler-controller  
@@ -368,7 +368,7 @@ Topic                        | Publisher                                        
 `job-termination-requested`  | `AdminTool`                                                                                         | `JobTerminator`                | This message is published when the user clicks the terminate button in the `AdminTool`.
 `spot-instance-terminating`  | CloudWatch rule `spot-instance-terminating`                                                         | `JobTerminator`                | When a AWS Spot instance is about to terminate it issues a warning notification. This notification is forwarded via the CloudWatch rule to start the `JobTerminator` terminate process so that all `Tasks` currently running can terminate gracefully.
 `task-finished`              | `JobScheduler` `TaskHandlerController` `JobTerminator`                                              | `JobScheduler` `JobTerminator` | This message is published to notify the `JobScheduler` that it can check if it can assign a new `Task` and for the `JobTerminator` to check if all `Tasks` have finished and it can update the `Job` status. This message is sent when a `Task` is set to a finished state like `SUCCESS`, `FAILED` or `TERMINATED`. 
-`task-handler-finished`      | CloudWatch rule `task-handler-finished`                                                             | `TaskHandlerController`        | When a AWS Batch job enters the status `SUCCESS` or `FAILED` the CloudWatch rule is triggered and publishes a message. This triggers TaskHandlerController, which update the **JJ: MongoDB?** database.
+`task-handler-finished`      | CloudWatch rule `task-handler-finished` **JJ: can't this also be triggered by TaskHandlerController for termining tasks? See SNS topics diagram** | `TaskHandlerController`        | When a AWS Batch job enters the status `SUCCESS` or `FAILED` the CloudWatch rule is triggered and publishes a message. This triggers TaskHandlerController, which update the **JJ: MongoDB?** database.
 `task-handler-running`       | CloudWatch rule `task-handler-running`                                                              | `TaskHandlerController`        | When a AWS Batch job enters the status `RUNNING` the CloudWatch rule is triggered and publishes a message.
 `task-handler-submitted`     | CloudWatch rule `task-handler-submitted`                                                            | `TaskHandlerController`        | When a AWS Batch job enters the status `RUNNING` the CloudWatch rule is triggered and publishes a message.
 `task-terminating`           | `JobTerminator`                                                                                     | `TaskHandlerController`        | This message is published by the `JobTerminator` when the administrator requested an assigned or running `Task` to terminate.
@@ -462,6 +462,11 @@ Example:
   "timeInstants": []
 }
 ```
+
+**JJ: This chart disagrees with the message-flow diagram. message-flow seems to suggest that it is JobTerminator 
+that posts to the job-complete topic. However this chart shows TaskHandlerController being the one to change 
+MongoDB once all tasks are finished (See the bottom of the chart). Maybe the message-flow diagram should be 
+changed to show TaskHandlerController being the one to change MongoDB**
 
 #### <a name="extraction-request"></a>Extraction-Request
 The `ExtractionRequest` is the entity holding information about a data extraction request submitted by a user in the 
