@@ -364,14 +364,14 @@ Topic                        | Publisher                                        
 `job-termination-requested`  | `AdminTool`                                                                                         | `JobTerminator`                | This message is published when the user clicks the terminate button in the `AdminTool`.
 `spot-instance-terminating`  | CloudWatch rule `spot-instance-terminating`                                                         | `JobTerminator`                | When a AWS Spot instance is about to terminate it issues a warning notification. This notification is forwarded via the CloudWatch rule to start the `JobTerminator` terminate process so that all `Tasks` currently running can terminate gracefully.
 `task-finished`              | `JobScheduler` `TaskHandlerController` `JobTerminator`                                              | `JobScheduler` `JobTerminator` | This message is published to notify the `JobScheduler` that it can check if it can assign a new `Task` and for the `JobTerminator` to check if all `Tasks` have finished and it can update the `Job` status. This message is sent when a `Task` is set to a finished state like `SUCCESS`, `FAILED` or `TERMINATED`. 
-`task-handler-finished`      | CloudWatch rule `task-handler-finished`                                                             | `TaskHandlerController`        | When a AWS Batch job enters the status `SUCCESS` or `FAILED` the CloudWatch rule is triggered and publishes a message.
+`task-handler-finished`      | CloudWatch rule `task-handler-finished`                                                             | `TaskHandlerController`        | When a AWS Batch job enters the status `SUCCESS` or `FAILED` the CloudWatch rule is triggered and publishes a message. This triggers TaskHandlerController, which update the **JJ: MongoDB?** database.
 `task-handler-running`       | CloudWatch rule `task-handler-running`                                                              | `TaskHandlerController`        | When a AWS Batch job enters the status `RUNNING` the CloudWatch rule is triggered and publishes a message.
 `task-handler-submitted`     | CloudWatch rule `task-handler-submitted`                                                            | `TaskHandlerController`        | When a AWS Batch job enters the status `RUNNING` the CloudWatch rule is triggered and publishes a message.
 `task-terminating`           | `JobTerminator`                                                                                     | `TaskHandlerController`        | This message is published by the `JobTerminator` when the administrator requested an assigned or running `Task` to terminate.
 `task-termination-requested` | `AdminTool`                                                                                         | `JobTerminator`                | This message is published when the user clicks the terminate-task button in the `AdminTool`.
 
 ### <a name="object-definitions"></a>Object definitions
-Three of the main objects in the eReefs application are the `Job`, the `Task`, and the `ExtractionRequest`.  
+Three of the main objects in the eReefs application are the `Job`, the `Task`, and the `ExtractionRequest`. **JJ: so an ExtractionRequest is not a job, but it triggers a job? I think that should be explained. I'm also interested as to why an ExtractionRequest isn't a type of job. If that's explanation doesn't belong in this documentation them please message me on teams.**
 
 #### <a name="job"></a>Job
 The `Job` is the aggregating entity for one or more `Tasks`.  **JJ: please add an example of what tasks might make up a job.**
@@ -461,7 +461,7 @@ Example:
 
 #### <a name="extraction-request"></a>Extraction-Request
 The `ExtractionRequest` is the entity holding information about a data extraction request submitted by a user in the 
-`ExtractionTool`.  
+`ExtractionTool`.  **JJ: it triggers a job to be created? I assume so because "EXTRACTION_REQUEST" is a possible value of the `triggeredBy` of a `Job`.**
 
 Definition:  
 
@@ -545,11 +545,11 @@ Example:
 Status              | Description
 ------------------- | ---------------------------
 `APPROVED`          | `Job` has either been approved automatically by the `JobApprover` (effort < threshold), or manual approval has been granted. State can only be set by `JobApprover`. Next acceptable states are: `RUNNING`, `FAILED` or `TERMINATING`.
-`APPROVAL_DENIED`   | `Job` has not been approved. This is a final state. State can only be set by `JobApprover`.
+`APPROVAL_DENIED`   | `Job` has not been approved. This is a final state. State can only be set by `JobApprover`. **JJ: what happens to the job then? What might be the reasons for a job being denied?**
 `AWAITING_APPROVAL` | `Job` has been identified by the `JobApprover` as requiring manual approval, but approval has not yet been received. State can only be set by `JobApprover`. Next acceptable states are: `APPROVED`, `APPROVAL_DENIED` or `TERMINATED`.
 `CREATED`           | `Job` has been created by the `JobPlanner`. State can only be set by `JobPlanner`. Next acceptable states are: `AWAITING_APPROVAL`, `APPROVED`, `COMPLETED` or `TERMINATED`.
 `COMPLETED`         | `Job` has successfully completed running. This is a final state. State can only be set by `JobTerminator`.
-`FAILED`            | `Job` has unsuccessfully completed running. This is a final state. State can only be set by `JobScheduler` or `JobTerminator`.
+`FAILED`            | `Job` has unsuccessfully completed running. This is a final state. State can only be set by `JobScheduler` or `JobTerminator`. **JJ: Why can FAILED be set by JobScheduler? I'm guessing that would only be if it failed to be scheduled? If it's actually because of some edge case then this may not need to be included in the docs.**
 `RUNNING`           | `Job` is currently being executed by the `JobScheduler`. State can only be set by `JobScheduler`. Next acceptable states are: `COMPLETED`, `FAILED`, `TERMINATING` or `TERMINATED`.
 `TERMINATED`        | `Job` was terminated and no `Tasks` are executing. This is a final state. State can only be set by `JobTerminator`.
 `TERMINATING`       | `Job` has been terminated/cancelled. State can only be set by `JobTerminator`. Next acceptable state is `TERMINATED`.
