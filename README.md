@@ -319,7 +319,9 @@ to send out emails notifying the user when an extraction request has finished pr
 ![architecture overview](./charts/overview.png)  
 *Figure 4. Technical overview of the AIMS eReefs Platform infrastructure.* 
 
-The eReefs application is a distributed system using the AWS infrastructure (see Figure 4). The [Definitions](https://github.com/aims-ks/ereefs-definitions) repository contains the code for the deployment of the services. It includes the following: 
+The eReefs application is a distributed system using the AWS infrastructure (see Figure 4).
+The [Definitions](https://github.com/aims-ks/ereefs-definitions) repository contains the code for the deployment of the services.
+It includes the following: 
 
 - AWS Batch to manage a pool of servers
 - AWS S3 persistent storage, facilitates access by multiple servers
@@ -330,20 +332,39 @@ The eReefs application is a distributed system using the AWS infrastructure (see
 
 Bigger components like the `JobPlanner` run in a Docker container on EC2 instances while smaller components run as AWS Lambda 
 functions. It uses an event-driven approach using AWS SNS. The custom build components are loosely coupled without direct 
-interaction, publishing messages to AWS SNS topics which trigger other components subscribed to it. The message
-format is JSON.
+interaction, publishing messages to AWS SNS topics which trigger other components subscribed to it.
+The SNS messages are in JSON format.
 
 S3 is used as a file storage while MongoDB is used as the system database, holding information shared across multiple 
 components, e.g. `Job` definitions or `Task` status. AWS Batch is used for scheduling and processing single `Tasks` 
-while Amazon CloudWatch triggers the [DownloadManager](https://github.com/open-AIMS/ereefs-download-manager) on a regular basis (via the download-request SNS topic) and pushes notifications (**JJ: to SNS?**) when an AWS Batch job 
+while Amazon CloudWatch triggers the [DownloadManager](https://github.com/open-AIMS/ereefs-download-manager)
+on a regular basis (via the download-request SNS topic) and pushes notifications (**JJ: to SNS? -
+GL: CloudWatch pushes notifications when a job starts or finishes? I didn't know that. Will need to ask Marc.**) when an AWS Batch job 
 either starts processing or finishes. Furthermore, Amazon CloudWatch is set up to push a message to SNS when an Amazon Spot 
-Instance is going to be terminated. For managing `Jobs`, `Tasks` and `Extraction-Requests`, administrators can use the 
-`AdminTool`. **JJ: where can I find out more about the AdminTool? I can't see it in the Repositories section.** It has a JS user interface which communicates with Amazon API Gateway to process tasks (e.g. `approve-job`).
-A further component of the system is the [ExtractionToolUI](https://github.com/aims-ks/ereefs-extraction-tool-ui). This tool provides users with the possibility to specify 
-exactly which part of the data (raw eReefs data or aggregations) they are interested in and creates a file for 
-downloading. The [ExtractionTool](https://github.com/aims-ks/ereefs-extraction-tool-ui) has a JS front end and communicates with Amazon API Gateway for processing requests.
+Instance is going to be terminated.
 
-**JJ: I think this section needs work. The finer details are there but the overall picture is lost. I'm not sure how many different types of events can trigger a Job, but if not too many, I think it would be good to go over the flow of events that lead from the trigger event. As far as I understand there are 3 possible trigger events; 1. new data is published by CSIRO; 2. eReefs models are updated; 3. a custom product is requested through the Extraction Tool. It would be good if that was more clear, and if we could see exactly the flow of events when one of these things happens.**
+For managing `Jobs`, `Tasks` and `Extraction-Requests`, administrators can use the 
+`AdminTool`, projects [AdminUI](https://github.com/aims-ks/ereefs-admin-ui) and [AdminBackend](https://github.com/aims-ks/ereefs-admin-backend).
+**JJ: where can I find out more about the AdminTool? I can't see it in the Repositories section. GL: It's composed of AdminUI and AdminBackend**
+It has a JS user interface which communicates with Amazon API Gateway to process tasks (e.g. `approve-job`).
+
+A further component of the system is the `ExtractionTool`, projects [ExtractionToolUI](https://github.com/aims-ks/ereefs-extraction-tool-ui)
+and [ExtractionToolBackend](https://github.com/aims-ks/ereefs-extraction-tool-backend).
+This tool provides members of the public with the possibility to specify 
+exactly which part of the data (raw eReefs data or aggregations) they are interested in and creates a file for 
+downloading. The `ExtractionTool` has a JS front end and communicates with Amazon API Gateway for processing requests.
+
+**JJ: I think this section needs work. The finer details are there but the overall picture is lost.
+I'm not sure how many different types of events can trigger a Job, but if not too many,
+I think it would be good to go over the flow of events that lead from the trigger event.
+As far as I understand there are 3 possible trigger events;
+1: new data is published by CSIRO;
+2: eReefs models are updated;
+3: a custom product is requested through the Extraction Tool.
+It would be good if that was more clear, and if we could see exactly the flow of events when one of these things happens.
+GL: You forgot:
+4: CloudWatch daily trigger of the download manager
+Note about 3: It's not a custom product, it's a small subset of data. Like, what's the temperature at those locations at that time.**
 
 ## <a name="sns-topics-and-messages"></a>SNS topics and messages
 One of the core concepts in this application is the AWS SNS service with its topics and messages. They connect the 
