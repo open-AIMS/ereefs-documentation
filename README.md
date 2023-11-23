@@ -366,13 +366,16 @@ GL: You forgot:
 4: CloudWatch daily trigger of the download manager
 Note about 3: It's not a custom product, it's a small subset of data. Like, what's the temperature at those locations at that time.**
 
+
 ## <a name="sns-topics-and-messages"></a>SNS topics and messages
+
 One of the core concepts in this application is the AWS SNS service with its topics and messages. They connect the 
 components by offering a publisher-subscriber model.  
 
-**JJ: what do the black dots represent?**
-**JJ: What does the top right side of the chart prepresent? Is this the ExtractionTool? if so, why is the AdminTool involved?**
-**JJ: all input sources need clarity on what the trigger is.**
+**JJ: what do the black dots represent? - GL: Entry points. I agree, it could be clearer.**
+**JJ: What does the top right side of the chart represent? Is this the ExtractionTool? if so, why is the AdminTool involved? -
+GL: I have the same questions. I assume it's an error. Will need to ask Marc.**
+**JJ: all input sources need clarity on what the trigger is. - GL: Agree. The black dots needs labels to be less confusing.**
 
 
 
