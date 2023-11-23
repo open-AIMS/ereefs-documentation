@@ -463,11 +463,6 @@ Example:
 }
 ```
 
-**JJ: This chart disagrees with the message-flow diagram. message-flow seems to suggest that it is JobTerminator 
-that posts to the job-complete topic. However this chart shows TaskHandlerController being the one to change 
-MongoDB once all tasks are finished (See the bottom of the chart). Maybe the message-flow diagram should be 
-changed to show TaskHandlerController being the one to change MongoDB**
-
 #### <a name="extraction-request"></a>Extraction-Request
 The `ExtractionRequest` is the entity holding information about a data extraction request submitted by a user in the 
 `ExtractionTool`.  **JJ: it triggers a job to be created? I assume so because "EXTRACTION_REQUEST" is a possible value of the `triggeredBy` of a `Job`.**
@@ -582,6 +577,11 @@ Status                | Description
 The following chart describes the default processing workflow for a `Task`:
 
 ![scenario-task-processing-default](./charts/scenario_task-processing_default.png)
+
+**JJ: This chart disagrees with the message-flow diagram. message-flow seems to suggest that it is JobTerminator 
+that posts to the job-complete topic. However this chart shows TaskHandlerController being the one to change 
+MongoDB once all tasks are finished (See the bottom of the chart). Maybe the message-flow diagram should be 
+changed to show TaskHandlerController being the one to change MongoDB**
 
 ### <a name="extraction-request-status"></a>Extraction-Request
 
