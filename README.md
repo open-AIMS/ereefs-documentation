@@ -580,7 +580,7 @@ The following chart describes the default processing workflow for a `Task`:
 
 **JJ: This chart disagrees with the message-flow diagram. message-flow seems to suggest that it is JobTerminator 
 that posts to the job-complete topic. However this chart shows TaskHandlerController being the one to change 
-MongoDB once all tasks are finished (See the bottom of the chart). Maybe the message-flow diagram should be 
+MongoDB to say Job complete once all tasks are finished (See the bottom of the chart). Maybe the message-flow diagram should be 
 changed to show TaskHandlerController being the one to change MongoDB**
 
 ### <a name="extraction-request-status"></a>Extraction-Request
