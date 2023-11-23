@@ -302,7 +302,7 @@ format is JSON.
 
 S3 is used as a file storage while MongoDB is used as the system database, holding information shared across multiple 
 components, e.g. `Job` definitions or `Task` status. AWS Batch is used for scheduling and processing single `Tasks` 
-while Amazon CloudWatch triggers the [DownloadManager](https://github.com/open-AIMS/ereefs-download-manager) on a regular basis (via the download-request SNS topic) and pushes notifications (**JJ: to SNS?**) when an AWS Batch job 
+while Amazon CloudWatch triggers the [DownloadManager](https://github.com/open-AIMS/ereefs-download-manager) on a regular basis (via the SNS topic) and pushes notifications (**JJ: to SNS?**) when an AWS Batch job 
 either starts processing or finishes. Furthermore, Amazon CloudWatch is set up to push a message to SNS when an Amazon Spot 
 Instance is going to be terminated. For managing `Jobs`, `Tasks` and `Extraction-Requests`, administrators can use the 
 `AdminTool`. **JJ: where can I find out more about the AdminTool? I can't see it in the Repositories section.** It has a JS user interface which communicates with Amazon API Gateway to process tasks (e.g. `approve-job`).
@@ -317,7 +317,9 @@ One of the core concepts in this application is the AWS SNS service with its top
 components by offering a publisher-subscriber model.  
 
 **JJ: what do the black dots represent?**
-**JJ: is CloudWatch-download-manager posting to the download-request topic on a schedule?**
+**JJ: What does the top right side of the chart prepresent? Is this the ExtractionTool? if so, why is the AdminTool involved?**
+**JJ: all input sources need clarity on what the trigger is.**
+
 
 
 ![message flow](./charts/message-flow.png)  
