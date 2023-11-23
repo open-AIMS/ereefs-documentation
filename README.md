@@ -404,18 +404,80 @@ Topic                        | Publisher                                        
 `task-termination-requested` | `AdminTool`                                                                                         | `JobTerminator`                | This message is published when the user clicks the terminate-task button in the `AdminTool`.
 
 ### <a name="object-definitions"></a>Object definitions
-Three of the main objects in the eReefs application are the `Job`, the `Task`, and the `ExtractionRequest`.
+Three of the main database objects in the eReefs application are the `Job`, the `Task`, and the `ExtractionRequest`.
 **JJ: so an ExtractionRequest is not a job, but it triggers a job? I think that should be explained.
 I'm also interested as to why an ExtractionRequest isn't a type of job.
 If that's explanation doesn't belong in this documentation them please message me on Teams.
 GL: I believe you are right, it triggers a Job. Will need to ask Marc.**
 
+Example of a `job` database entry
+```
+{
+  "_id" : "Job_1234",
+  "status" : "COMPLETED",
+  "createdBy" : "JOB_PLANNER",
+  "history" : [
+    { "timestamp" : "1990-01-01T00:14:54+10:00", "status" : "CREATED", "description" : "Job created by JOB_PLANNER" },
+    { "timestamp" : "1990-01-01T00:15:24+10:00", "status" : "APPROVED", "description" : "Status changed to APPROVED by JobApprover." },
+    { "timestamp" : "1990-01-01T00:15:26+10:00", "status" : "RUNNING", "description" : "Status changed to RUNNING by JobScheduler" },
+    { "timestamp" : "1990-01-01T02:14:15+10:00", "status" : "COMPLETED", "description" : "Status changed to COMPLETED by JobTerminator. Reason: All Tasks have finished successfully." }
+  ]
+}
+```
+
+Example of `tasks` database entries created for the `job` example above
+```
+{
+  "_id" : "NcAggregateTask_8546",
+  "type" : "ncaggregate",
+  "jobId" : "Job_1234",
+  "productDefinitionId" : "products__ncaggregate__ereefs__gbr1_2-0__daily-daily",
+  "status" : "SUCCESS",
+  "history" : [
+    { "timestamp" : "1990-01-01T00:15:13+10:00", "status" : "CREATED", "description" : "Task created." },
+    { "timestamp" : "1990-01-01T00:15:26+10:00", "status" : "ASSIGNED", "description" : "Status changed to ASSIGNED by JobScheduler." },
+    { "timestamp" : "1990-01-01T00:15:45+10:00", "status" : "RUNNING", "description" : "Status changed to RUNNING by TaskHandlerController. Reason: task-handler-running event" },
+    { "timestamp" : "1990-01-01T02:14:14+10:00", "status" : "SUCCESS", "description" : "Status changed to SUCCESS by TaskHandlerController. Reason: task-handler-finished event with SUCCESS exit code." }
+  ],
+  "stage" : "operational",
+  "executionContext" : { ... },
+  "outcome" : {
+    "generatedFiles" : [ ... ]
+  },
+  "dependsOn" : [ ]
+}
+```
+
+```
+{
+  "_id" : "NcAggregateTask_9753",
+  "type" : "ncaggregate",
+  "jobId" : "Job_1234",
+  "productDefinitionId" : "products__ncaggregate__ereefs__gbr1_2-0__daily-daily",
+  "status" : "SUCCESS",
+  "history" : [
+    { "timestamp" : "1990-01-01T00:15:13+10:00", "status" : "CREATED", "description" : "Task created." },
+    { "timestamp" : "1990-01-01T00:15:26+10:00", "status" : "ASSIGNED", "description" : "Status changed to ASSIGNED by JobScheduler." },
+    { "timestamp" : "1990-01-01T00:15:45+10:00", "status" : "RUNNING", "description" : "Status changed to RUNNING by TaskHandlerController. Reason: task-handler-running event" },
+    { "timestamp" : "1990-01-01T02:13:45+10:00", "status" : "SUCCESS", "description" : "Status changed to SUCCESS by TaskHandlerController. Reason: task-handler-finished event with SUCCESS exit code." }
+  ],
+  "stage" : "operational",
+  "executionContext" : { ... },
+  "outcome" : {
+    "generatedFiles" : [ ... ]
+  },
+  "dependsOn" : [
+    "NcAggregateTask_8546"
+  ]
+}
+```
+
 #### <a name="job"></a>Job
 The `Job` is the aggregating entity for one or more `Tasks`.
 **JJ: please add an example of what tasks might make up a job.
-GL: I will get an example from the Database. It will be hard to come up with a minimal example, but I can simplify it.**
+GL: I added some simplified examples of job and tasks above. I remove none-relevant info, simplified IDs and altered what could be sensitive info.**
 
-**JJ: the details of a job are stored in MongoDB? - GL: Yes**
+**JJ: the details of a job are stored in MongoDB? - GL: Yes. I modified the Object definitions above.**
 
 Definition:  
 
