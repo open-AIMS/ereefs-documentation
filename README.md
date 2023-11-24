@@ -325,7 +325,6 @@ Instance is going to be terminated. **JJ: I added the name of the queue (spot-in
 
 For managing `Jobs`, `Tasks` and `Extraction-Requests`, administrators can use the 
 `AdminTool`, projects [AdminUI](https://github.com/aims-ks/ereefs-admin-ui) and [AdminBackend](https://github.com/aims-ks/ereefs-admin-backend).
-**JJ: where can I find out more about the AdminTool? I can't see it in the Repositories section. GL: It's composed of AdminUI and AdminBackend**
 It has a JS user interface which communicates with Amazon API Gateway to process tasks (e.g. `approve-job`).
 
 A further component of the system is the `ExtractionTool`, projects [ExtractionToolUI](https://github.com/aims-ks/ereefs-extraction-tool-ui)
@@ -356,6 +355,8 @@ components by offering a publisher-subscriber model.
 **JJ: What does the top right side of the chart represent? Is this the ExtractionTool? if so, why is the AdminTool involved? -
 GL: I have the same questions. I assume it's an error. Will need to ask Marc.**
 **JJ: all input sources need clarity on what the trigger is. - GL: Agree. The black dots needs labels to be less confusing.**
+
+**JJ: I think the black dots can also represent no action, like the result of JobTerminator if "Are all Tasks finished?" == No.**
 
 
 
