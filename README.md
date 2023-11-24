@@ -36,18 +36,9 @@ eReefs has many components developed and maintained by each of the organisations
 modelling (Queensland Government), remote sensing (BOM and CSIRO), hydrodynamic modelling (BOM and CSIRO) and biogeochemical 
 modelling (CSIRO). AIMS's contribution is to provide data aggregation and visualisation services. Figure 1 shows an overview 
 of the major components of eReefs. The AIMS eReefs platform generates its products based on eReefs model data provided by
-CSIRO, which are driven from boundary data from BOM and DES (Queensland Government).
-In simple terms, the *boundary data* serves as a specialised input dataset for the model, containing information solely
-at the edges of the model's coverage area. This data, along with other inputs, enables the model to simulate conditions
-throughout the entire managed region. **JJ: It's not clear what the boundary 
-data is or why it's required. Either explain here or link to more information - GL: I added a sentence just before this comment.
-I'm not entirely sure if that clarifies it or adds confusion. We could simply remove reference to the boundary data. I don't think it's necessary.
-It might help to understand how the model works, but that's not really our goal here.**
-Both CSIRO and BOM provide some additional
-visualisation websites. Each of the eReefs website are accessible from the [eReefs website](https://ereefs.org.au/).
-**JJ: why not link to them here? - GL: Because URLs are not always well maintained. They can change without providing redirection.
-Also, it's not what we do, it's just a quick reference to what they do.** This
-repository focuses on the [AIMS eReefs Platform](https://ereefs.aims.gov.au/) which provides visualisations of the eReefs
+CSIRO. Input data at the boundary of the eReefs model is provided by BOM and DES (Queensland Government). Both CSIRO and BOM provide some additional
+visualisation websites ([BOM's Oceanography Forecast](http://www.bom.gov.au/oceanography/forecasts/), and [CSIRO's eReefs portal](https://portal.ereefs.info/)). Each of these websites are also accessible from the [eReefs website](https://ereefs.org.au/).
+This repository focuses on the [AIMS eReefs Platform](https://ereefs.aims.gov.au/) which provides visualisations of the eReefs
 models as animated multi-panel map videos that show the relationships between variables in the models. Figure 1 below show 
 how the data flows between different services that make up the eReefs platform. The AIMS eReefs Platform is represented by the 
 more saturated blue box in the figure below.
@@ -61,13 +52,7 @@ from CSIRO models to the National Computing Infrastructure (NCI) THREDDs data se
 
 The data repository is checked daily for changes. The [DownloadManager](https://github.com/open-AIMS/ereefs-download-manager)
 automatically downloads new or modified files to a mirror on Amazon S3 and notify the system when files are downloaded.
-**GL: I rephrased that sentence, using the text I wrote for the private doc overview**
-The downloaded files are checked for file corruptions and passed through an NcAggregate preprocessing stage to trim out unwanted variables 
-and depths from the data. **JJ: does this mean we aren't processing all available data? If so, might be good to explain why -
-GL: The eReefs model outputs TB of data. We only generate visualisation for what we consider interesting.
-There is no point generating GB of videos to show temperature or current at a depth of 4km.
-The output files also contain several functional variables, which are required by the model, but are not useful to the public** 
-This significantly shrinks the size of the mirror that must be maintained, leading to significant
+The downloaded files are checked for file corruptions and passed through an NcAggregate preprocessing stage. The preprocessing trims out lower priority data such as temperature and current at a depth of 4km. **JJ: however, these are still available as NetCDF files right?** This significantly shrinks the size of the mirror that must be maintained, leading to significant
 cost savings, and a reduction in the size of S3 downloads needed for subsequent processing stages. Details of the products already
 processed are recorded in a central database. **JJ: why record these? Does something else do the processing,
 or do we add the products to the database as we process them? -
@@ -75,7 +60,7 @@ GL: S3 keeps very little file metadata. We register metadata such as last modifi
 NetCDF variable and dimensions extents, file checksum, etc. The system needs that info to know if the file needs to be re-downloaded, re-processed, ignored, etc.
 The system needs to know what have changed in order to know what needs to be done (i.e. re-generated).
 All metadata info is stored in DB. We also store NetCDF variable info because getting those from a DB only takes a few milliseconds.
-Getting it from the file itself takes about 5 minutes (the file needs to be downloaded for the info to be extracted)**
+Getting it from the file itself takes about 5 minutes (the file needs to be downloaded for the info to be extracted) - JJ: which database is this? MongoDB?**
 
 The trimmed mirror model data is then processed by NcAggregate to calculate temporal aggregate products and other derived
 exposure products. Each of these processes pulls data from the S3 mirror then saves the derived data back to S3. Each of the
@@ -91,15 +76,13 @@ That project contains quite a lot of stuff, not just the definition of the DB.**
 available on the individual product pages (see [example](https://ereefs.aims.gov.au/ereefs-aims/gbr4/temp-wind-salt-current)), through a custom Drupal module that provides 
 the User Interface to navigate through the time series of visualisation
 products. This Drupal module discovers the listing and details of all the visualisations through a server side JSON service,
-the [eReefs metadata API](https://github.com/aims-ks/ereefs-metadata-api), that 
-allows queries against the central Database. **JJ: this needs link to details about the JSON service. - GL: I added a link to the project repo**
+the [eReefs metadata API](https://github.com/aims-ks/ereefs-metadata-api), that allows queries against the central Database.
 
 Users can download the data through two different options: utilising the THREDDS service for the NetCDF file download,
 or they can use the Data extraction tool to easily retrieve a subset of the data in a user-friendly CSV format.
 The Data extraction tool consists of a JavaScript web GUI application that talks to backend services.
 When a user file a data extraction request, it triggers NcAggregate to generate timeseries extractions of datasets.
 The final extractions are stored in S3 and an email is sent to the user, with a link to download the data.
-**JJ: what Data extraction tool? The tool needs some preamble about its purpose - GL: Yes, that was added later and it feels disconnected. I re-phrased the whole paragraph.**
 
 ![AIMS eReefs platform overview](./charts/powerpoint-aims-ereefs-platform-overview.png)
 *Figure 2. Overview of the AIMS eReefs Platform*
@@ -114,10 +97,9 @@ The processing workload on the system tends to happen in bursts. The most notabl
   which in turns triggers NcAggregate to re-generate its derived files, then triggers NcAnimate to re-generate the visualisation
   products; maps and videos. This massive workload can take weeks or even months to process.
 
-A group of tasks that relate to a particular action (such as processing new data, or regenerating derived data and visualisations), is known as a Job.
-**JJ: I have added the previous sentence base on what I can gather about Jobs. Please change if incorrect. - GL: That's perfect.**
-The coordination of the tasks that make up a Job is performed by [JobPlanner](https://github.com/aims-ks/ereefs-job-planner).
-It translates the requests (perform an aggregation, check for new model data) into jobs that need to be performed.
+A group of tasks that relate to a particular action (such as processing new data, or regenerating derived data and visualisations), is known as a `Job`.
+The coordination of the tasks that make up a `Job` is performed by [JobPlanner](https://github.com/aims-ks/ereefs-job-planner).
+It translates the requests (perform an aggregation, check for new model data) into `Jobs` that need to be performed and populates them with `Tasks`.
 
 This section provide a short overview of [JobPlanner](https://github.com/aims-ks/ereefs-job-planner).
 More information can be found in [the GitHub repository](https://github.com/aims-ks/ereefs-job-planner).
@@ -151,11 +133,11 @@ A task is associated with a Docker image stored in an AWS ECR (Elastic Container
 AWS Batch deploy the task's Docker image to a free server, initialise it with some environmental variables specific
 to the task and starts the service.
 Once a spawned server is idle and the queue is empty, AWS Batch terminates the server.
-Only a few small servers remain active, for eReefs permanent services; database, prometheus and THREDDS.
+Only a few small servers remain active, for eReefs permanent services; MongoDB database, Prometheus and THREDDS.
+**JJ: I think we need more information about Prometheus. if I search for it on this page I don't find much.**
 
 The file `cloudformation/batch.yaml` from the [eReefs Definitions](https://github.com/aims-ks/ereefs-definitions) project
 defines the maximum number of servers (`MaxvCpus`) and server types (`InstanceTypes`) that can be deployed in each queue.
-**JJ: which AWS service manages this? - GL: I rephrase the whole paragraph.**
 
 This dynamic scaling of services significantly
 reduces the server costs of the system as it allows high peak computing performance without needing to pay for idle servers during
@@ -167,7 +149,7 @@ Spot instances correspond to surplus uncommitted servers in the AWS infrastructu
 They can be reclaimed by AWS with only 2 minutes notice should a customer wish to use the server.
 To use these servers, the computing architecture needs to be robust against these outages.
 In the AIMS eReefs Platform, all servers are hosted on AWS spot instances. If any of the active servers are recalled by AWS then a
-new spot instance is spawned to take over the lost server. This happens for the database and prometheus servers, resulting in small
+new spot instance is spawned to take over the lost server. This happens for the database and Prometheus servers, resulting in small
 outages (typically 5 min). For processing jobs when the server is recalled the uncompleted jobs are re-issued the next time the 
 [JobPlanner](https://github.com/aims-ks/ereefs-job-planner) is triggered.
 
@@ -236,11 +218,9 @@ The `JobApprover` checks the processing size of newly created `Jobs` and either 
 email informing the administrators about the necessary manual approval or denial.  
 - **JobScheduler**  
 Link: https://github.com/aims-ks/ereefs-job-scheduler  
-**JJ: Schedules `Tasks` within a `Job`? - GL: Yes. A job is a collection of task, in a tree structure, organised depending on their dependencies.
-The JobScheduler submit the first group of task from the Job, the one with no dependencies. When they are completed, it fills the queue with a second group, and so on.
-This needs to be handled by a service (JobScheduler) because of the dependencies.**
-The `JobScheduler` is triggered either when a new `Job` is approved or when a `Task` has finished. It submits `Tasks` to
-AWS Batch for execution based on the interdependencies of the `Tasks` as identified by `JobPlanner`.
+Schedules `Tasks` within a `Job`. The `JobScheduler` is triggered either when a new `Job` is approved or when a `Task` 
+has finished. It submits `Tasks` to AWS Batch for execution based on the interdependencies of the `Tasks` as 
+identified by `JobPlanner`.
 - **TaskHandlerController**  
 Link: https://github.com/aims-ks/ereefs-task-handler-controller  
 When a container starts processing a `Task` the `TaskHandlerController` updates the `Task` status in the database. It 
@@ -339,9 +319,9 @@ S3 is used as a file storage while MongoDB is used as the system database, holdi
 components, e.g. `Job` definitions or `Task` status. AWS Batch is used for scheduling and processing single `Tasks` 
 while Amazon CloudWatch triggers the [DownloadManager](https://github.com/open-AIMS/ereefs-download-manager)
 on a regular basis (via the download-request SNS topic) and pushes notifications (**JJ: to SNS? -
-GL: CloudWatch pushes notifications when a job starts or finishes? I didn't know that. Will need to ask Marc.**) when an AWS Batch job 
-either starts processing or finishes. Furthermore, Amazon CloudWatch is set up to push a message to SNS when an Amazon Spot 
-Instance is going to be terminated.
+GL: CloudWatch pushes notifications when a job starts or finishes? I didn't know that. Will need to ask Marc. - JJ: we should say which queue here also**) when an AWS Batch job 
+either starts processing or finishes. Furthermore, Amazon CloudWatch is set up to push a message to SNS (spot-instance-terminating queue) when an Amazon Spot 
+Instance is going to be terminated. **JJ: I added the name of the queue (spot-instance-terminating) to the sentence, but I'm confused about it's purpose. At first I thought it was how TaskHandlerController knew that the task was finished, but from looking at the SNS Topics and Messages chart it seems that that's what CloudWatch-task-handler-finished is for. What is the purpose of CloudWatch-spot-instance-terminating?**
 
 For managing `Jobs`, `Tasks` and `Extraction-Requests`, administrators can use the 
 `AdminTool`, projects [AdminUI](https://github.com/aims-ks/ereefs-admin-ui) and [AdminBackend](https://github.com/aims-ks/ereefs-admin-backend).
