@@ -265,7 +265,7 @@ library; the EDAL library store references to used data into static collections.
 `ncAnimate frame` performs it's constrained list of actions and terminates, freeing all memory.
 - **POJO Shared Library**  
 Link: https://github.com/open-AIMS/ereefs-pojo
-A shared library for accessing core eReefs POJOs (plan old Java objects) from a repository. A POJO is an `Entity` (also 
+A shared library for accessing core eReefs POJOs (plain old Java objects) from a repository. A POJO is an `Entity` (also 
 referred to as a `Data Object`) within the system which captures the values of a domain-specific object. This library
 provides both file-based (for development and testing) and MongoDB-based (for Production and Test) implementations.
 - **Database**  
