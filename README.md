@@ -27,6 +27,7 @@ The AIMS eReefs Visualisation Platform is developed and maintained by the [Austr
     - [Task status](#task-status)
     - [Extraction-Request status](#extraction-request-status)
 - [Infrastructure](#infrastructure)
+    - [DNS records](#dns-records)
 
 ## <a name="background"></a>Background
 eReefs has many components developed and maintained by each of the organisations in the collaboration, including catchment 
@@ -528,3 +529,10 @@ cluster control and life cycle management. The individual server instances used 
 
 Other components of the eReefs Platform, such as MongoDB and Prometheus (metrics), also use AWS EC2 for server 
 instances.
+
+### <a name="dns-records"></a>DNS records
+The DNS records are managed by AWS Route53. Some records are managed by Cloud Formation (in code),
+others are managed manually.
+
+- **THREDDS**: Managed by Cloud Formation. See [ereefs-thredds](https://github.com/aims-ks/ereefs-thredds) project for more information.
+- **Extraction tool**: Managed manually. See [ereefs-extraction-tool-ui README](https://github.com/aims-ks/ereefs-extraction-tool-ui?tab=readme-ov-file#initial-setup-steps) for more information.
