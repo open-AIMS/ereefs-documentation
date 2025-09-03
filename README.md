@@ -531,8 +531,8 @@ Other components of the eReefs Platform, such as MongoDB and Prometheus (metrics
 instances.
 
 ### <a name="dns-records"></a>DNS records
-The DNS records are managed by AWS Route53. Some records are managed by Cloud Formation (in code),
-others are managed manually.
+The DNS records are managed by AWS Route53. Some records are created by Cloud Formation (in code),
+others are created manually.
 
-- **THREDDS**: Managed by Cloud Formation. See [ereefs-thredds](https://github.com/aims-ks/ereefs-thredds) project for more information.
-- **Extraction tool**: Managed manually. See [ereefs-extraction-tool-ui README](https://github.com/aims-ks/ereefs-extraction-tool-ui?tab=readme-ov-file#initial-setup-steps) for more information.
+- **THREDDS**: Created by Cloud Formation. See [ereefs-thredds](https://github.com/aims-ks/ereefs-thredds) project for more information.
+- **Extraction tool**: Created manually. See [ereefs-extraction-tool-ui README](https://github.com/aims-ks/ereefs-extraction-tool-ui?tab=readme-ov-file#initial-setup-steps) for more information.
